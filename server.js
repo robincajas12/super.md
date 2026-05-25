@@ -43,6 +43,29 @@ app.get('/api/files', (req, res) => {
     });
 });
 
+// Endpoint para obtener archivos del WORKING_DIR (soporta subcarpetas)
+app.get('/api/working-files', (req, res) => {
+    const subDir = req.query.subDir || '';
+    const baseDir = config.workingDir || config.scriptsDir;
+    const absolutePath = path.resolve(__dirname, baseDir, subDir);
+    
+    try {
+        if (!fs.existsSync(absolutePath)) return res.json([]);
+        
+        const files = fs.readdirSync(absolutePath).map(file => {
+            const stats = fs.statSync(path.join(absolutePath, file));
+            return {
+                name: file,
+                path: path.join(subDir, file),
+                type: stats.isDirectory() ? 'dir' : 'file'
+            };
+        });
+        res.json(files);
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+
 // Leer contenido de un archivo
 app.get('/api/file', (req, res) => {
     const filePath = req.query.path;
