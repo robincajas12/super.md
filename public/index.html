@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual FS Editor</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>Virtual FS Studio</h1>
+            <div id="status">Conectado</div>
+        </header>
+        
+        <div class="main-container">
+            <aside class="sidebar">
+                <h3>Fuentes (textos/)</h3>
+                <ul id="source-list"></ul>
+                <h3>Scripts (scripts/)</h3>
+                <ul id="script-list"></ul>
+            </aside>
+
+            <main class="editor-area">
+                <div class="panel-header">
+                    <span id="current-filename">Selecciona un archivo</span>
+                    <button id="save-btn">Guardar (Ctrl+S)</button>
+                </div>
+                <textarea id="editor" placeholder="Escribe aquí..."></textarea>
+            </main>
+
+            <section class="preview-area">
+                <div class="panel-header">
+                    <span>Vista Previa (Procesado)</span>
+                </div>
+                <div id="preview-content"></div>
+            </section>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+</html>
