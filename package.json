@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "node index.js"
-
+    "dev": "node index.js",
+    "manage-mounts": "node manage_mounts.js"
   },
   "keywords": [],
   "author": "",

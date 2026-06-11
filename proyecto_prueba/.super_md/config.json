@@ -1,0 +1,7 @@
+{
+  "sourceDir": "./archives",
+  "projectDir": "../archives",
+  "mountPoint": "./mnt",
+  "scriptsDir": "./scripts",
+  "workingDir": "../archives"
+}
