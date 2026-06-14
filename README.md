@@ -63,6 +63,11 @@ Executes scripts from the configured scripts directory.
 node fetch-notion-tasks.js
 ```
 
+## VS Code Extension
+The project includes a VS Code extension located in the `extension/` directory. It provides integrated controls for the virtual filesystem:
+- **Toggle Mode:** Quickly switch between Edit and Exec modes directly from the editor.
+- **Select Config:** Manage VFS configuration files.
+
 ## Sidecar Pattern
 Dynamic context can be associated with any file by creating a `.super.md` companion. 
 
