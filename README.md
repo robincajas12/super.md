@@ -20,7 +20,7 @@ npm install
 node index.js <project_directory>
 ```
 
-The system will automatically mount the virtual filesystem. The mount point is configured in `.super_md/config.json`.
+The system will ask you the path to mount the virtual filesystem. The mount point is configured in `.super_md/config.json`.
 
 ## Features
 
