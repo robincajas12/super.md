@@ -50,9 +50,9 @@ time units supported:
 - minutes: m
 - hours: h
 - days: d
-</br>
+
 This block stores its result for 10 minutes. If 10 minutes have passed when reading the file, the code will execute again.
-</br>
+
 ````markdown
 ```run:10m
 echo "cached result"
