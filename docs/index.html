@@ -1,387 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Virtual FS Node — Computable Metadata Filesystem</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-
-:root {
-  --bg:       #050b14;
-  --bg2:      #080f1c;
-  --surface:  #0c1624;
-  --card:     #101c2e;
-  --border:   rgba(80,130,255,0.1);
-  --border-em:rgba(80,130,255,0.22);
-  --text:     #dde6f4;
-  --muted:    #6a85a8;
-  --hint:     #2e4060;
-  --accent:   #4f8fff;
-  --ok:       #34d399;
-  --fail:     #f87171;
-  --warn:     #fbbf24;
-  --mono: 'IBM Plex Mono', monospace;
-  --sans: 'Inter', sans-serif;
-}
-
-body {
-  font-family: var(--sans);
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-
-/* ── HERO SINGLE COLUMN ── */
-.hero-single { display: block; padding: 70px 0 60px; }
-.hero-text-row { max-width: 680px; margin-bottom: 44px; }
-
-/* ── HERO INLINE CYCLE ── */
-.hero-cycle-wrap {
-  background: var(--card);
-  border: 1px solid var(--border-em);
-  border-radius: 14px;
-  padding: 22px 24px;
-}
-.hero-cycle-controls { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
-.hero-cycle-stage {
-  display: grid;
-  grid-template-columns: 110px 1fr 110px;
-  align-items: start;
-  gap: 0;
-  margin-bottom: 14px;
-}
-.hero-lane { gap: 7px; }
-
-/* ── CHECKLIST OUTPUT PANEL ── */
-.hero-checklist-output {
-  background: var(--bg2);
-  border: 1px solid var(--border-em);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 4px;
-}
-.hco-bar {
-  display: flex; align-items: center; gap: 6px;
-  padding: 9px 14px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-}
-.hco-title { font-family: var(--mono); font-size: 10px; color: var(--hint); margin-left: auto; }
-.hco-body {
-  padding: 12px 16px;
-  font-family: var(--mono);
-  font-size: 11.5px;
-  line-height: 1.9;
-  min-height: 120px;
-  transition: opacity .2s;
-}
-.hco-body.fade { opacity: 0; }
-.hco-line { display: block; }
-.hco-ok   { color: var(--ok); }
-.hco-fail { color: var(--fail); }
-.hco-warn { color: var(--warn); padding-left: 18px; }
-.hco-sec  { color: var(--hint); font-size: 10px; text-transform: uppercase; letter-spacing: .05em; }
-.hco-cmd  { color: var(--text); }
-.hco-cmd::before { content: '$ '; color: var(--accent); }
-.hco-muted { color: var(--muted); }
-
-/* ── RESPONSIVE hero-single ── */
-@media (max-width: 900px) {
-  .hero-cycle-stage { grid-template-columns: 80px 1fr 80px; }
-}
-
-/* ══════════════════════════════════════════
-   ANIMATED GRID BG */
-body::before {
-  content: '';
-  position: fixed; inset: 0;
-  background-image:
-    linear-gradient(var(--border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border) 1px, transparent 1px);
-  background-size: 56px 56px;
-  animation: gridDrift 25s linear infinite;
-  pointer-events: none; z-index: 0;
-}
-@keyframes gridDrift { to { background-position: 56px 56px; } }
-
-/* ── GLOW ORB ── */
-body::after {
-  content: '';
-  position: fixed; top: -25%; left: 50%; transform: translateX(-50%);
-  width: 900px; height: 700px; border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(79,143,255,0.09) 0%, transparent 68%);
-  pointer-events: none; z-index: 0;
-  animation: orbBreath 7s ease-in-out infinite;
-}
-@keyframes orbBreath {
-  0%,100% { opacity:1; transform: translateX(-50%) scale(1); }
-  50%      { opacity:.6; transform: translateX(-50%) scale(1.08); }
-}
-
-.wrap { max-width: 1100px; margin: 0 auto; padding: 0 36px; position: relative; z-index: 1; }
-
-/* ── NAV ── */
-nav {
-  position: sticky; top: 0; z-index: 100;
-  border-bottom: 1px solid var(--border);
-  backdrop-filter: blur(22px);
-  background: rgba(5,11,20,0.82);
-}
-.nav-inner { display: flex; justify-content: space-between; align-items: center; height: 62px; }
-.logo { font-family: var(--mono); font-size: 13px; color: var(--text); }
-.logo span { color: var(--accent); }
-.nav-links { display: flex; gap: 30px; align-items: center; }
-.nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; transition: color .2s; }
-.nav-links a:hover { color: var(--text); }
-
-/* ── DIVIDER ── */
-.divider { border: none; border-top: 1px solid var(--border); }
-
-/* ── SHARED SECTION STYLES ── */
-section { padding: 90px 0; }
-.section-tag { font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }
-h2 { font-size: clamp(26px,3vw,40px); font-weight: 700; letter-spacing: -.04em; line-height: 1.1; margin-bottom: 14px; color: var(--text); }
-.section-desc { font-size: 14px; color: var(--muted); line-height: 1.8; max-width: 540px; margin-bottom: 44px; }
-
-/* ── BUTTONS ── */
-.btn-primary { padding: 11px 22px; background: var(--accent); color: #fff; border: none; border-radius: 8px; font-family: var(--sans); font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity .2s, transform .1s; }
-.btn-primary:hover { opacity: .85; transform: translateY(-1px); }
-.btn-ghost { padding: 11px 22px; background: transparent; color: var(--muted); border: 1px solid var(--border-em); border-radius: 8px; font-size: 13px; font-weight: 500; cursor: pointer; transition: color .2s, border-color .2s; }
-.btn-ghost:hover { color: var(--text); border-color: var(--accent); }
-
-/* ══════════════════════════════════════════
-   HERO
-══════════════════════════════════════════ */
-.eyebrow {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--mono); font-size: 10px; font-weight: 600; color: var(--accent);
-  letter-spacing: .1em; text-transform: uppercase;
-  padding: 5px 12px; border: 1px solid rgba(79,143,255,0.3); border-radius: 4px;
-  background: rgba(79,143,255,0.07); margin-bottom: 22px;
-}
-.eyebrow::before { content:''; width:5px; height:5px; border-radius:50%; background:var(--accent); animation: dotPulse 2s ease-in-out infinite; }
-@keyframes dotPulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.6)} }
-h1 { font-size: clamp(32px,4.5vw,54px); font-weight: 800; line-height: 1.06; letter-spacing: -.04em; margin-bottom: 22px; color: var(--text); }
-h1 em { font-style: normal; color: var(--accent); }
-.hero-desc { font-size: 15px; color: var(--muted); line-height: 1.8; max-width: 500px; margin-bottom: 32px; }
-.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
-
-/* ── FLOW TRACK ── */
-.flow-track { display: grid; grid-template-columns: repeat(3,1fr); border: 1px solid var(--border-em); border-radius: 12px; overflow: hidden; }
-.flow-node { padding: 22px 16px; border-right: 1px solid var(--border); text-align: center; background: var(--card); transition: background .2s; }
-.flow-node:last-child { border-right: none; }
-.flow-node:hover { background: var(--surface); }
-.fn-num { font-family: var(--mono); font-size: 10px; color: var(--hint); margin-bottom: 8px; }
-.fn-icon { font-size: 20px; margin-bottom: 8px; display: block; }
-.fn-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--text); }
-.fn-desc { font-size: 11px; color: var(--muted); line-height: 1.5; }
-
-/* ── BLOCK CARDS ── */
-.block-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-.block-card { background: var(--card); border: 1px solid var(--border-em); border-radius: 12px; padding: 22px; transition: border-color .2s, transform .15s; }
-.block-card:hover { transform: translateY(-2px); border-color: rgba(79,143,255,0.4); }
-.bc-tag { font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--accent); background: rgba(79,143,255,0.09); border: 1px solid rgba(79,143,255,0.2); border-radius: 4px; padding: 3px 8px; display: inline-block; margin-bottom: 12px; }
-.block-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 7px; color: var(--text); }
-.block-card p { font-size: 12px; color: var(--muted); line-height: 1.65; }
-
-/* ── CYCLE ANIMATION ── */
-.cycle-actor {
-  display: flex; flex-direction: column; align-items: center; gap: 8px;
-  padding: 18px 10px; background: var(--surface);
-  border: 1.5px solid var(--border); border-radius: 10px;
-  text-align: center;
-  transition: border-color .4s, box-shadow .4s, transform .35s;
-}
-.cycle-actor.active {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(79,143,255,0.13), 0 0 28px rgba(79,143,255,0.12);
-  transform: scale(1.03);
-}
-.cycle-actor-icon { font-size: 26px; }
-.cycle-actor-name { font-size: 10px; color: var(--muted); font-family: var(--mono); }
-
-.cycle-lane { display: flex; flex-direction: column; gap: 9px; padding: 8px 16px; }
-.cycle-msg {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 11px; border-radius: 7px;
-  font-size: 11px; font-family: var(--mono);
-  background: var(--surface); border: 1px solid var(--border);
-  opacity: 0; transform: translateY(10px) scale(.97);
-  transition: opacity .4s, transform .4s;
-}
-.cycle-msg.visible { opacity: 1; transform: translateY(0) scale(1); }
-.cycle-msg-left  { border-left: 2px solid var(--accent); }
-.cycle-msg-right { border-left: 2px solid var(--ok); flex-direction: row-reverse; text-align: right; }
-.cycle-tag       { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; background: rgba(79,143,255,0.1); color: var(--accent); }
-.cycle-file { font-size: 11px; color: var(--muted); }
-
-.cycle-progress-track { background: var(--surface); border-radius: 99px; height: 3px; overflow: hidden; }
-.cycle-progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), #34d399); width: 0; transition: width .5s; }
-
-footer { padding: 36px 0; border-top: 1px solid var(--border); }
-.footer-copy { font-family: var(--mono); font-size: 11px; color: var(--hint); text-align: center; }
-
-@media (max-width: 900px) {
-  .flow-track    { grid-template-columns: 1fr; }
-  .block-grid    { grid-template-columns: 1fr; }
-  .hero-cycle-stage { grid-template-columns: 80px 1fr 80px; }
-}
-</style>
+    <meta charset="UTF-8">
+    <title>SUPER.MD Documentation</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+        code { background: #f4f4f4; padding: 0.2rem 0.4rem; border-radius: 4px; font-family: monospace; }
+        pre { background: #2d2d2d; color: #fff; padding: 1rem; border-radius: 6px; overflow-x: auto; }
+        .img-container { margin: 1rem 0; }
+    </style>
 </head>
 <body>
 
-<nav>
-  <div class="wrap nav-inner">
-    <div class="logo">virtual<span>-fs</span>-node</div>
-    <div class="nav-links">
-      <a href="#mechanics">Mechanics</a>
-      <a href="#blocks">Blocks</a>
-      <a href="#">GitHub</a>
-    </div>
-  </div>
-</nav>
+    <h1>SUPER.MD</h1>
+    <p>A virtual filesystem that attaches computable metadata and execution layers to Markdown files.</p>
+    <p><code>super.md</code> Node mounts a directory via FUSE and intercepts file read operations. Content is processed on-demand by executing embedded code blocks.</p>
 
-<div class="wrap">
+    <div class="img-container">
+        <img width="400" alt="carbon (3)" src="https://github.com/user-attachments/assets/5d3bd3b9-1258-4458-a133-8835b940ae63" />
+        <img width="400" alt="carbon (4)" src="https://github.com/user-attachments/assets/36ea6e67-9406-47dd-af8f-e7dd977654b1" />
+    </div>
 
-<section class="hero hero-single">
-  <div class="hero-text-row">
-    <div>
-      <div class="eyebrow">FUSE · Computable Markdown</div>
-      <h1>Markdown files that <em>execute</em></h1>
-      <p class="hero-desc">Virtual FS Node mounts a folder as a virtual filesystem. When a file is read, the system intercepts the call and executes embedded code blocks, returning live results as plain text.</p>
-      <div class="btn-row">
-        <button class="btn-primary" onclick="location.href='#mechanics'">See mechanics</button>
-        <button class="btn-ghost"   onclick="location.href='#blocks'">View blocks</button>
-      </div>
-    </div>
-  </div>
+    <section>
+        <h2>Usage</h2>
+        <h3>Prerequisites</h3>
+        <ul>
+            <li>Node.js >= 14</li>
+            <li>FUSE</li>
+        </ul>
 
-  <div class="hero-cycle-wrap">
-    <div class="hero-cycle-controls">
-      <button class="cycle-btn" id="heroCyclePlay">▶ Play</button>
-      <button class="cycle-btn cycle-btn-ghost" id="heroCycleReset">↺ Reset</button>
-      <span class="cycle-step-label" id="heroCycleLabel">Cycle Simulation</span>
-    </div>
-    <div class="hero-cycle-stage">
-      <div class="cycle-actor" id="heroActorUser">
-        <div class="cycle-actor-icon">👤</div>
-        <div class="cycle-actor-name">User / Tool</div>
-      </div>
-      <div class="cycle-lane hero-lane">
-        <div class="cycle-msg cycle-msg-left"  id="hmsg1"><span class="cycle-tag">read()</span><span class="cycle-file">file.md</span></div>
-        <div class="cycle-msg cycle-msg-right" id="hmsg2"><span class="cycle-tag">result</span><span class="cycle-file">Computable content</span></div>
-        <div class="cycle-msg cycle-msg-left"  id="hmsg3"><span class="cycle-tag">write()</span><span class="cycle-file">Update source</span></div>
-        <div class="cycle-msg cycle-msg-left"  id="hmsg4"><span class="cycle-tag">read()</span><span class="cycle-file">file.md (refreshed)</span></div>
-      </div>
-      <div class="cycle-actor" id="heroActorFuse">
-        <div class="cycle-actor-icon">⚡</div>
-        <div class="cycle-actor-name">VFS / FUSE</div>
-      </div>
-    </div>
-    <div class="hero-checklist-output">
-      <div class="hco-bar"><div class="hco-title">Live Output</div></div>
-      <div class="hco-body" id="hcoBody">Waiting…</div>
-    </div>
-    <div class="cycle-progress-track" style="margin-top:10px"><div class="cycle-progress-bar" id="heroCycleBar"></div></div>
-  </div>
-</section>
+        <h3>Start</h3>
+        <pre><code>node index.js &lt;project_directory&gt;</code></pre>
+        <p>If it is the first time you open this project, it will ask for the path where you want your virtual files to live.</p>
 
-<hr class="divider">
+        <p><strong>All files must use the <code>.super.md</code></strong> extension; standard <code>.md</code> files will behave normally and remain unaffected.</p>
+        <p>In fact, every other file besides <code>.super.md</code> should work perfectly as normal files.</p>
+        <p><strong>You can use multiple code blocks in a single file.</strong></p>
+    </section>
 
-<section id="mechanics">
-  <div class="section-tag">Core Mechanics</div>
-  <h2>Intercept and Transmute</h2>
-  <div class="flow-track">
-    <div class="flow-node">
-      <div class="fn-num">01</div>
-      <div class="fn-icon">📄</div>
-      <div class="fn-label">Source</div>
-      <div class="fn-desc">Markdown with executable blocks.</div>
-    </div>
-    <div class="flow-node">
-      <div class="fn-num">02</div>
-      <div class="fn-icon">⚡</div>
-      <div class="fn-label">FUSE</div>
-      <div class="fn-desc">Read syscall triggers block execution.</div>
-    </div>
-    <div class="flow-node">
-      <div class="fn-num">03</div>
-      <div class="fn-icon">✅</div>
-      <div class="fn-label">Output</div>
-      <div class="fn-desc">Result replaces block in the stream.</div>
-    </div>
-  </div>
-</section>
+    <section>
+        <h2>State Management</h2>
+        <ul>
+            <li><strong>Edit Mode (1/e):</strong> Standard source text.</li>
+            <li><strong>Exec Mode (2/x):</strong> Process output.</li>
+        </ul>
+        <p>All <code>.super.md</code> files can be edited in <strong>Edit Mode</strong> but are read-only in <strong>Exec Mode</strong>.</p>
+    </section>
 
-<hr class="divider">
+    <section>
+        <h2>Execution Blocks</h2>
 
-<section id="blocks">
-  <div class="section-tag">Execution Blocks</div>
-  <h2>Interface Specification</h2>
-  <div class="block-grid">
-    <div class="block-card">
-      <div class="bc-tag">run-node</div>
-      <h3>Node.js</h3>
-      <p>Executes code via standard input stream.</p>
-    </div>
-    <div class="block-card">
-      <div class="bc-tag">run</div>
-      <h3>Shell</h3>
-      <p>Executes commands in the mount context.</p>
-    </div>
-    <div class="block-card">
-      <div class="bc-tag">script</div>
-      <h3>Script</h3>
-      <p>Invokes files from the configured directory.</p>
-    </div>
-  </div>
-</section>
+        <h3>run-node</h3>
+        <pre><code># Title
+```run-node
+console.log("## 1 + 1: ", 1 + 1);
+```</code></pre>
+        <p>Running <code>cat file_name.super.md</code> should return this:</p>
+        <pre><code># Title
+## 1 + 1: 2</code></pre>
 
-</div>
+        <h3>run</h3>
+        <pre><code>```run
+echo "**hello**"
+```</code></pre>
+        <p>Running <code>cat file_name.super.md</code> should return this:</p>
+        <pre><code>**hello**</code></pre>
 
-<footer>
-  <div class="wrap footer-copy">virtual-fs-node — computable metadata filesystem</div>
-</footer>
+        <h3>script</h3>
+        <pre><code>```script
+./my-script
+```</code></pre>
 
-<script>
-(function() {
-  const HSTEPS = [
-    { label: 'Step 1: Request', user: true, fuse: false, show: [], text: 'read("file.md")' },
-    { label: 'Step 2: Process', user: false, fuse: true, show: ['hmsg1'], text: 'executing blocks...' },
-    { label: 'Step 3: Result', user: true, fuse: false, show: ['hmsg1', 'hmsg2'], text: 'output returned.' }
-  ];
-  let hCur = 0, hPlaying = false, hTimer = null;
-  function applyHStep(i) {
-    const s = HSTEPS[i];
-    document.getElementById('heroCycleLabel').textContent = s.label;
-    document.getElementById('heroCycleBar').style.width = ((i+1)/HSTEPS.length*100) + '%';
-    document.getElementById('hcoBody').textContent = s.text;
-    ['hmsg1','hmsg2','hmsg3','hmsg4'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.classList.toggle('visible', s.show.includes(id));
-    });
-  }
-  applyHStep(0);
-  document.getElementById('heroCyclePlay').addEventListener('click', function() {
-    if (hPlaying) { clearInterval(hTimer); hPlaying = false; this.textContent = '▶ Play'; }
-    else {
-      hPlaying = true; this.textContent = '⏸ Pause';
-      hTimer = setInterval(() => {
-        hCur = (hCur + 1) % HSTEPS.length; applyHStep(hCur);
-      }, 1500);
-    }
-  });
-  document.getElementById('heroCycleReset').addEventListener('click', function() {
-    clearInterval(hTimer); hPlaying=false; hCur=0;
-    document.getElementById('heroCyclePlay').textContent='▶ Play';
-    applyHStep(0);
-  });
-})();
-</script>
+        <h3>Caching</h3>
+        <p>Append a duration to a block tag. Syntax: <code>:time</code> (e.g., <code>:1h</code>).</p>
+        <p>Time units supported:</p>
+        <ul>
+            <li>seconds: s</li>
+            <li>minutes: m</li>
+            <li>hours: h</li>
+            <li>days: d</li>
+        </ul>
+        <p>This block stores its output for 10 minutes. If 10 minutes have passed when reading the file, the code will execute again.</p>
+        <pre><code>```run:10m
+echo "cached result"
+```</code></pre>
+    </section>
+
 </body>
 </html>
