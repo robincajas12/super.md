@@ -45,6 +45,12 @@ echo "hello"
 
 ### Caching
 Append a duration to a block tag. Syntax: `:time` (e.g., `:1h`).
+time units supported:
+- seconds: s
+- minutes: m
+- hours: h
+- days: d
+This block stores its result for 10 minutes. If 10 minutes have passed when reading the file, the code will execute again.
 ````markdown
 ```run:10m
 echo "cached result"
