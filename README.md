@@ -16,9 +16,15 @@ node index.js <project_directory>
 ```
 If it is the first time you open this project, it will ask for the path where you want your virtual files to live
 
+**All files must use the <code>.super.md</code>** extension, standard <code>.md</code> files will behave normally and remain unaffected.
+
+In fact every other file besides <code>.super.md</code> should work perfectly as normal files 
+
 ## State Management
 - **Edit Mode (1/e):** Standard source text.
 - **Exec Mode (2/x):** Process output.
+
+All <code>.super.md</code> files can be edited in **Edit Mode** but read-only in **Exec Mode**
 
 ## Execution Blocks
 
