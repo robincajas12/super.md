@@ -28,7 +28,8 @@ If it is the first time you open this project, it will ask for the path where yo
 console.log("## 1 + 1: ", 1 + 1);
 ```
 ````
-#### result:
+Output: 
+
 ````markdown
 ## 1 + 1: 2
 ````
@@ -38,7 +39,8 @@ console.log("## 1 + 1: ", 1 + 1);
 echo "**hello**"
 ```
 ````
-#### result:
+Output:
+
 ````markdown
 **hello**
 ````
