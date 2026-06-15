@@ -22,22 +22,30 @@ node index.js <project_directory>
 ## Execution Blocks
 
 ### run-node
+````markdown
 ```run-node
 console.log(1 + 1);
 ```
+````
 
 ### run
+````markdown
 ```run
 echo "hello"
 ```
+````
 
 ### script
+````markdown
 ```script
 ./my-script
 ```
+````
 
 ### Caching
 Append a duration to a block tag. Syntax: `:time` (e.g., `:1h`).
+````markdown
 ```run:10m
 echo "cached result"
 ```
+````
