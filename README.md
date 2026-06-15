@@ -1,8 +1,8 @@
-# virtual-fs-node
+# SUPER.MD
 
 A virtual filesystem that attaches computable metadata and execution layers to Markdown files.
 
-Virtual FS Node mounts a directory via FUSE and intercepts file read operations. Content is processed on-demand by executing embedded code blocks.
+super.md Node mounts a directory via FUSE and intercepts file read operations. Content is processed on-demand by executing embedded code blocks.
 
 ## Usage
 
@@ -14,6 +14,7 @@ Virtual FS Node mounts a directory via FUSE and intercepts file read operations.
 ```bash
 node index.js <project_directory>
 ```
+If it is the first time you open this project, it will ask for the path where you want your virtual files to live
 
 ## State Management
 - **Edit Mode (1/e):** Standard source text.
