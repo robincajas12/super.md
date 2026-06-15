@@ -5,7 +5,6 @@ A virtual filesystem that attaches computable metadata and execution layers to M
 super.md Node mounts a directory via FUSE and intercepts file read operations. Content is processed on-demand by executing embedded code blocks.
 
 ## Usage
-
 ### Prerequisites
 - Node.js >= 14
 - FUSE
@@ -73,3 +72,8 @@ This block stores its result for 10 minutes. If 10 minutes have passed when read
 echo "cached result"
 ```
 ````
+<img width="500" height="" alt="carbon (3)" src="https://github.com/user-attachments/assets/5d3bd3b9-1258-4458-a133-8835b940ae63" />
+<img width="500" height="" alt="carbon (4)" src="https://github.com/user-attachments/assets/36ea6e67-9406-47dd-af8f-e7dd977654b1" />
+
+
+
