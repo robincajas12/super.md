@@ -25,15 +25,22 @@ If it is the first time you open this project, it will ask for the path where yo
 ### run-node
 ````markdown
 ```run-node
-console.log(1 + 1);
+console.log("## 1 + 1: ", 1 + 1);
 ```
 ````
-
+#### result:
+````markdown
+## 1 + 1: 2
+````
 ### run
 ````markdown
 ```run
-echo "hello"
+echo "**hello**"
 ```
+````
+#### result:
+````markdown
+**hello**
 ````
 
 ### script
