@@ -22,6 +22,9 @@ If it is the first time you open this project, it will ask for the path where yo
 
 In fact every other file besides <code>.super.md</code> should work perfectly as normal files 
 
+**you can use multiple codeblock in one single file**
+
+
 ## State Management
 - **Edit Mode (1/e):** Standard source text.
 - **Exec Mode (2/x):** Process output.
@@ -32,6 +35,7 @@ All <code>.super.md</code> files can be edited in **Edit Mode** but read-only in
 
 ### run-node
 ````markdown
+# Title
 ```run-node
 console.log("## 1 + 1: ", 1 + 1);
 ```
@@ -39,6 +43,7 @@ console.log("## 1 + 1: ", 1 + 1);
 running <code>cat file_name.super.md</code> should return this: 
 
 ````markdown
+# Title
 ## 1 + 1: 2
 ````
 ### run
