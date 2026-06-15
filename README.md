@@ -4,8 +4,8 @@ A virtual filesystem that attaches computable metadata and execution layers to M
 
 super.md Node mounts a directory via FUSE and intercepts file read operations. Content is processed on-demand by executing embedded code blocks.
 
-<img width="500" height="" alt="carbon (3)" src="https://github.com/user-attachments/assets/5d3bd3b9-1258-4458-a133-8835b940ae63" />
-<img width="500" height="" alt="carbon (4)" src="https://github.com/user-attachments/assets/36ea6e67-9406-47dd-af8f-e7dd977654b1" />
+<img width="400" height="" alt="carbon (3)" src="https://github.com/user-attachments/assets/5d3bd3b9-1258-4458-a133-8835b940ae63" />
+<img width="400" height="" alt="carbon (4)" src="https://github.com/user-attachments/assets/36ea6e67-9406-47dd-af8f-e7dd977654b1" />
 
 ## Usage
 ### Prerequisites
