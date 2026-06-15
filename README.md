@@ -22,7 +22,7 @@ If it is the first time you open this project, it will ask for the path where yo
 
 In fact every other file besides <code>.super.md</code> should work perfectly as normal files 
 
-**you can use multiple codeblock in one single file**
+**You can use multiple code blocks in a single file.**
 
 
 ## State Management
