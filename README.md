@@ -36,7 +36,7 @@ All <code>.super.md</code> files can be edited in **Edit Mode** but read-only in
 console.log("## 1 + 1: ", 1 + 1);
 ```
 ````
-running <code>cat file.super.md</code> should return this: 
+running <code>cat file_name.super.md</code> should return this: 
 
 ````markdown
 ## 1 + 1: 2
@@ -47,7 +47,7 @@ running <code>cat file.super.md</code> should return this:
 echo "**hello**"
 ```
 ````
-running <code>cat file.super.md</code> should return this: 
+running <code>cat file_name.super.md</code> should return this: 
 
 ````markdown
 **hello**
