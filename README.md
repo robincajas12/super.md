@@ -1,5 +1,5 @@
 # SUPER.MD
-.
+..
 A virtual filesystem that attaches computable metadata and execution layers to Markdown files.
 
 super.md Node mounts a directory via FUSE and intercepts file read operations. Content is processed on-demand by executing embedded code blocks.
